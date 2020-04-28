@@ -4,7 +4,6 @@ import com.mpatric.mp3agic.InvalidDataException;
 import com.mpatric.mp3agic.Mp3File;
 import com.mpatric.mp3agic.UnsupportedTagException;
 
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
@@ -12,7 +11,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 /**
  * @author Paweł Matyaszczyk
@@ -23,7 +21,6 @@ public class Program {
         List<Song> songList = new ArrayList<>();
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(dir, "*.mp3")){
             for (Path entry: stream) {
-                System.out.println(entry.getFileName());
                 Mp3File mp3file = new Mp3File(entry);
                 Song song = new Song();
                 if (mp3file.hasId3v1Tag()) {
@@ -38,26 +35,24 @@ public class Program {
                     song.setAlbum(mp3file.getId3v2Tag().getAlbum());
                     song.setTitle(mp3file.getId3v2Tag().getTitle());
                 }
-                song.setSize(String.valueOf(Files.size(entry)));
+                song.setSize((float) Files.size(entry));
                 songList.add(song);
-                String path = String.valueOf(dir)+"description.txt";
-                FileWriter writer = new FileWriter(String.valueOf(dir+"\\description.txt"),false);
+                String path = dir+"description.txt";
+                FileWriter writer = new FileWriter(dir+"\\description.txt",false);
                 for (Song listElement: songList) {
-                    writer.write("Name of file: " + String.valueOf(entry.getFileName())+"\n");
-                    writer.write("Artist: "+ listElement.getArtist()+"\n");
-                    writer.write("Year: "+listElement.getYear()+"\n");
+                    writer.write("Autor: "+ listElement.getArtist()+"\n");
+                    writer.write("Rok produkcji: "+listElement.getYear()+"\n");
                     writer.write("Album: "+listElement.getAlbum()+"\n");
-                    writer.write("Title: "+listElement.getTitle()+"\n");
-                    writer.write("Size: "+listElement.getSize()+"\n");
+                    writer.write("Tytuł: "+listElement.getTitle()+"\n");
+                    writer.write("Rozmiar w MB: "+String.format("%.2f",listElement.getSize()/(1024*1024))+"\n");
                 }
                 writer.close();
+                System.out.println("Szczegóły plików zapisane w description.txt ");
             }
 
         } catch (IOException x ){
-            System.out.println(x);
-        } catch (InvalidDataException e) {
-            e.printStackTrace();
-        } catch (UnsupportedTagException e) {
+            System.out.println(x.getMessage());
+        } catch (InvalidDataException | UnsupportedTagException e) {
             e.printStackTrace();
         }
 

@@ -8,12 +8,12 @@ public class Song {
     private String year;
     private String album;
     private String title;
-    private String size;
+    private Float size;
 
     public Song() {
     }
 
-    public Song(String artist, String year, String album, String title, String size) {
+    public Song(String artist, String year, String album, String title, Float size) {
         this.artist = artist;
         this.year = year;
         this.album = album;
@@ -58,11 +58,11 @@ public class Song {
         else this.title = "";
     }
 
-    public String getSize() {
+    public Float getSize() {
         return size;
     }
 
-    public void setSize(String size) {
+    public void setSize(Float size) {
         this.size = size;
     }
 }
